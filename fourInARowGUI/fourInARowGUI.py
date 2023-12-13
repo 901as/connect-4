@@ -9,13 +9,34 @@ SPACESIZE = 50  # size of the tokens and individual board spaces in pixels
 FPS = 30  # frames per second to update the screen
 WINDOWWIDTH = 640  # width of the program's window, in pixels
 WINDOWHEIGHT = 480  # height in pixels
+DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * SPACESIZE) / 2)
 YMARGIN = int((WINDOWHEIGHT - BOARDHEIGHT * SPACESIZE) / 2)
+REDPILERECT = pygame.Rect(int(SPACESIZE / 2), WINDOWHEIGHT - int(3 * SPACESIZE / 2), SPACESIZE, SPACESIZE)
+BLACKPILERECT = pygame.Rect(WINDOWWIDTH - int(3 * SPACESIZE / 2), WINDOWHEIGHT - int(3 * SPACESIZE / 2), SPACESIZE,
+                            SPACESIZE)
+REDTOKENIMG = pygame.image.load('images/4row_red.png')
+REDTOKENIMG = pygame.transform.smoothscale(REDTOKENIMG, (SPACESIZE, SPACESIZE))
+BLACKTOKENIMG = pygame.image.load('images/4row_black.png')
+BLACKTOKENIMG = pygame.transform.smoothscale(BLACKTOKENIMG, (SPACESIZE, SPACESIZE))
+BOARDIMG = pygame.image.load('images/4row_board.png')
+BOARDIMG = pygame.transform.smoothscale(BOARDIMG, (SPACESIZE, SPACESIZE))
 
+HUMANWINNERIMG = pygame.image.load('images/4row_humanwinner.png')
+COMPUTERWINNERIMG = pygame.image.load('images/4row_computerwinner.png')
+TIEWINNERIMG = pygame.image.load('images/4row_tie.png')
+WINNERRECT = HUMANWINNERIMG.get_rect()
+WINNERRECT.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
+
+ARROWIMG = pygame.image.load('images/4row_arrow.png')
+ARROWRECT = ARROWIMG.get_rect()
+ARROWRECT.left = REDPILERECT.right + 10
+ARROWRECT.centery = REDPILERECT.centery
 BRIGHTBLUE = (0, 50, 255)
 WHITE = (255, 255, 255)
-
+BLACKTOKENIMG = pygame.image.load('images/4row_black.png')
+BLACKTOKENIMG = pygame.transform.smoothscale(BLACKTOKENIMG, (SPACESIZE, SPACESIZE))
 BGCOLOR = BRIGHTBLUE
 TEXTCOLOR = WHITE
 
@@ -24,6 +45,7 @@ BLACK = 'black'
 EMPTY = None
 HUMAN = 'human'
 COMPUTER = 'computer'
+FPSCLOCK = pygame.time.Clock()
 
 
 def run():
@@ -182,6 +204,7 @@ def animateDroppingToken(board, column, color):
 
 
 def animateComputerMoving(board, column):
+    BLACKPILERECT = pygame.Rect(WINDOWWIDTH - int(3 * SPACESIZE / 2), WINDOWHEIGHT - int(3 * SPACESIZE / 2), SPACESIZE, SPACESIZE)
     x = BLACKPILERECT.left
     y = BLACKPILERECT.top
     speed = 2.0
