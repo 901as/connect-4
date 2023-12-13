@@ -1,3 +1,4 @@
 opencv-python
 tensorflow
 keras
+pygame==1.9.3
