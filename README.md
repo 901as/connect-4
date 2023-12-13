@@ -45,7 +45,7 @@ To get started with the Connect 4 AI with Emotional Recognition Agent, follow th
    python main.py
    ```
 
-2. Follow the on-screen instructions to play Connect 4 against the AI or with a friend.
+2. To quit the script press q on your keyboard
 
 ## Emotional Recognition Agent
 The Emotional Recognition Agent is a key feature of this project. It can analyze user emotions through facial expressions or input and adapt the game experience accordingly. To enable or disable this feature, check the settings in the user interface.
