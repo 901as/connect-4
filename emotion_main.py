@@ -13,7 +13,8 @@ print("Loaded model from disk")
 # Set image resizing parameters
 WIDTH = 48
 HEIGHT = 48
-labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+#labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Sad', 'Surprise', 'Neutral']
+labels = ['Sad','Sad','Happy','Happy', 'Sad', 'Happy', 'Happy']
 
 # Load the cascade for face detection
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
