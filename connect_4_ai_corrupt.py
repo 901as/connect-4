@@ -14,8 +14,13 @@
 from fourInARowGUI import fourInARowGUI as GUI
 
 infinity = float('inf')
-from emotion_main_corrupt import detect_emotion
+from emotion_main_corrupt import display_webcam, get_emotion_data 
 
+
+if __name__ == "__main__":
+    print("Welcome to Connect Four!")
+    display_webcam()  # Start displaying the webcam feed
+    # ... rest of the code ...
 class Game:
     AI = -1
     PLAYER = 0
@@ -25,23 +30,24 @@ class Game:
         self.turn = self.AI
         self.first = self.turn
         self.board = game_board
-    def adjust_difficulty_based_on_emotion(self):
-        emotion_data = detect_emotion()  # Call the emotion detection function
+        self.ai_search_depth = 7
+def adjust_difficulty_based_on_emotion(self):
+    emotion_data = get_emotion_data()  # Call the emotion detection function
 
-        # Extract the 'happy', 'sad', and 'face_confidence' values
-        happy = emotion_data[0]['emotion']['happy']
-        sad = emotion_data[0]['emotion']['sad']
-        face_confidence = emotion_data[0]['face_confidence']
+    # Extract the 'happy', 'sad', and 'face_confidence' values
+    happy = emotion_data['emotion']['happy']
+    sad = emotion_data['emotion']['sad']
+    face_confidence = emotion_data['face_confidence']
 
-        # Calculate a difficulty adjustment factor based on the emotion data
-        # This is just a placeholder calculation, you might want to use a different formula
-        difficulty_adjustment = happy - sad + face_confidence
+    # Calculate a difficulty adjustment factor based on the emotion data
+    # This is just a placeholder calculation, you might want to use a different formula
+    difficulty_adjustment = happy - sad + face_confidence
 
-        # Adjust the AI's behavior based on the difficulty adjustment factor
-        if difficulty_adjustment < 0:
-            self.ai_search_depth = 3  # Make the AI play less optimally
-        else:
-            self.ai_search_depth = 7  # Make the AI play more optimally
+    # Adjust the AI's behavior based on the difficulty adjustment factor
+    if difficulty_adjustment < 0:
+        self.ai_search_depth = 3  # Make the AI play less optimally
+    else:
+        self.ai_search_depth = 7  # Make the AI play more optimally
     def is_game_over(self):
         if self.has_winning_state():
             """Display who won"""
@@ -99,7 +105,7 @@ class Game:
         """ AI Bot chooses next best move from current state """
         print("\nAI's Move...")
         temp_position = self.current_state.ai_position
-        self.current_state = alphabeta_search(self.current_state, self.first, d=7)
+        self.current_state = alphabeta_search(self.current_state, self.first, d=self.ai_search_depth)
 
         # Get column for GUI
         column = temp_position ^ self.current_state.ai_position
