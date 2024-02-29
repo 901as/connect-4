@@ -3,7 +3,6 @@ import random
 import pygame
 import sys
 import math
-import tkinter as tk
 
 BLUE = (0,0,255)
 BLACK = (0,0,0)
@@ -22,7 +21,7 @@ AI_PIECE = 2
 
 WINDOW_LENGTH = 4
 
-difficulty = 1
+difficulty = 100
 
 
 def create_board():
@@ -121,89 +120,58 @@ def score_position(board, piece):
 
 	return score
 
-
-def set_difficulty(difficulty):
-    global difficulty_level
-    difficulty_level = difficulty
-    print(f"Difficulty set to: {difficulty_level}")
-
-def create_difficulty_gui():
-    root = tk.Tk()
-    root.title("Connect  4 AI Difficulty")
-
-    label = tk.Label(root, text="Select Difficulty Level (1-7):")
-    label.pack()
-
-    difficulty_var = tk.IntVar()
-    difficulty_var.set(1)
-
-    for i in range(1,  8):
-        radio_button = tk.Radiobutton(root, text=str(i), variable=difficulty_var, value=i, command=lambda i=i: set_difficulty(i))
-        radio_button.pack()
-
-    root.mainloop()
-
-# Call this function to show the GUI
-create_difficulty_gui()
-
-
-
 def is_terminal_node(board):
 	return winning_move(board, PLAYER_PIECE) or winning_move(board, AI_PIECE) or len(get_valid_locations(board)) == 0
 
+import random
+
 def minimax(board, depth, alpha, beta, maximizingPlayer, difficulty):
-    valid_locations = get_valid_locations(board)
-    is_terminal = is_terminal_node(board)
-    if depth ==  0 or is_terminal:
-        if is_terminal:
-            if winning_move(board, AI_PIECE):
-                return (None,  100000000000000)
-            elif winning_move(board, PLAYER_PIECE):
-                return (None, -10000000000000)
-            else: # Game is over, no more valid moves
-                return (None,  0)
-        else: # Depth is zero
-            return (None, score_position(board, AI_PIECE))
-    if maximizingPlayer:
-        value = -math.inf
-        best_value = -math.inf
-        best_column = random.choice(valid_locations)
-        # Evaluate all moves
-        all_moves = []
-        for col in valid_locations:
-            row = get_next_open_row(board, col)
-            b_copy = board.copy()
-            drop_piece(b_copy, row, col, AI_PIECE)
-            new_score = minimax(b_copy, depth-1, alpha, beta, False, difficulty)[1]
-            all_moves.append((col, new_score))
-            if new_score > best_value:
-                best_value = new_score
-                best_column = col
-            alpha = max(alpha, best_value)
-            if alpha >= beta:
-                break
-        # Sort moves by score
-        all_moves.sort(key=lambda x: x[1], reverse=True)
-        # Select the move based on difficulty
-        if difficulty <= len(all_moves):
-            best_column = all_moves[difficulty-1][0]
-        return best_column, best_value
-    else: # Minimizing player
-        value = math.inf
-        best_value = math.inf
-        best_column = random.choice(valid_locations)
-        for col in valid_locations:
-            row = get_next_open_row(board, col)
-            b_copy = board.copy()
-            drop_piece(b_copy, row, col, PLAYER_PIECE)
-            new_score = minimax(b_copy, depth-1, alpha, beta, True, difficulty)[1]
-            if new_score < best_value:
-                best_value = new_score
-                best_column = col
-            beta = min(beta, best_value)
-            if alpha >= beta:
-                break
-        return best_column, best_value
+	valid_locations = get_valid_locations(board)
+	is_terminal = is_terminal_node(board)
+	if depth == 0 or is_terminal:
+		if is_terminal:
+			if winning_move(board, AI_PIECE):
+				return (None, 100000000000000)
+			elif winning_move(board, PLAYER_PIECE):
+				return (None, -10000000000000)
+			else: # Game is over, no more valid moves
+				return (None, 0)
+		else: # Depth is zero
+			return (None, score_position(board, AI_PIECE))
+	if maximizingPlayer:
+		value = -math.inf
+		column = random.choice(valid_locations)
+		for col in valid_locations:
+			row = get_next_open_row(board, col)
+			b_copy = board.copy()
+			drop_piece(b_copy, row, col, AI_PIECE)
+			new_score = minimax(b_copy, depth-1, alpha, beta, False, difficulty)[1]
+			if new_score > value:
+				value = new_score
+				column = col
+			alpha = max(alpha, value)
+			if alpha >= beta:
+				break
+		# Random move logic based on difficulty
+		if random.random() < difficulty / 10: # Adjust the condition based on difficulty
+			column = random.choice(valid_locations)
+		return column, value
+	else: # Minimizing player
+		value = math.inf
+		column = random.choice(valid_locations)
+		for col in valid_locations:
+			row = get_next_open_row(board, col)
+			b_copy = board.copy()
+			drop_piece(b_copy, row, col, PLAYER_PIECE)
+			new_score = minimax(b_copy, depth-1, alpha, beta, True, difficulty)[1]
+			if new_score < value:
+				value = new_score
+				column = col
+			beta = min(beta, value)
+			if alpha >= beta:
+				break
+		return column, value
+
 def get_valid_locations(board):
 	valid_locations = []
 	for col in range(COLUMN_COUNT):
