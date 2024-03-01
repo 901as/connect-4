@@ -21,7 +21,11 @@ AI_PIECE = 2
 
 WINDOW_LENGTH = 4
 
-difficulty = 1
+
+raw_difficulty = int(input("Enter a difficulty number between 1 and 10: "))
+difficulty = 11-raw_difficulty
+
+#difficulty = 10
 
 
 def create_board():
@@ -125,51 +129,59 @@ def is_terminal_node(board):
 
 
 def minimax(board, depth, alpha, beta, maximizingPlayer, difficulty):
-	valid_locations = get_valid_locations(board)
-	is_terminal = is_terminal_node(board)
-	if depth == 0 or is_terminal:
-		if is_terminal:
-			if winning_move(board, AI_PIECE):
-				return (None, 100000000000000)
-			elif winning_move(board, PLAYER_PIECE):
-				return (None, -10000000000000)
-			else: # Game is over, no more valid moves
-				return (None, 0)
-		else: # Depth is zero
-			return (None, score_position(board, AI_PIECE))
-	if maximizingPlayer:
-		value = -math.inf
-		column = random.choice(valid_locations)
-		for col in valid_locations:
-			row = get_next_open_row(board, col)
-			b_copy = board.copy()
-			drop_piece(b_copy, row, col, AI_PIECE)
-			new_score = minimax(b_copy, depth-1, alpha, beta, False, difficulty)[1]
-			if new_score > value:
-				value = new_score
-				column = col
-			alpha = max(alpha, value)
-			if alpha >= beta:
-				break
-		# Random move logic based on difficulty
-		if random.random() < difficulty / 10: # Adjust the condition based on difficulty
-			column = random.choice(valid_locations)
-		return column, value
-	else: # Minimizing player
-		value = math.inf
-		column = random.choice(valid_locations)
-		for col in valid_locations:
-			row = get_next_open_row(board, col)
-			b_copy = board.copy()
-			drop_piece(b_copy, row, col, PLAYER_PIECE)
-			new_score = minimax(b_copy, depth-1, alpha, beta, True, difficulty)[1]
-			if new_score < value:
-				value = new_score
-				column = col
-			beta = min(beta, value)
-			if alpha >= beta:
-				break
-		return column, value
+    valid_locations = get_valid_locations(board)
+    is_terminal = is_terminal_node(board)
+    if depth == 0 or is_terminal:
+        if is_terminal:
+            if winning_move(board, AI_PIECE):
+                return (None, 100000000000000)
+            elif winning_move(board, PLAYER_PIECE):
+                return (None, -10000000000000)
+            else: # Game is over, no more valid moves
+                return (None, 0)
+        else: # Depth is zero
+            return (None, score_position(board, AI_PIECE))
+    if maximizingPlayer:
+        value = -math.inf
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            row = get_next_open_row(board, col)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, AI_PIECE)
+            new_score = minimax(b_copy, depth-1, alpha, beta, False, difficulty)[1]
+            if new_score > value:
+                value = new_score
+                column = col
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        # Check for a winning move if difficulty is greater than 3
+        if difficulty >= 3:
+            for col in valid_locations:
+                row = get_next_open_row(board, col)
+                b_copy = board.copy()
+                drop_piece(b_copy, row, col, AI_PIECE)
+                if winning_move(b_copy, AI_PIECE):
+                    return col, value
+        # Random move logic based on difficulty
+        if random.random() < difficulty / 10: # Adjust the condition based on difficulty
+            column = random.choice(valid_locations)
+        return column, value
+    else: # Minimizing player
+        value = math.inf
+        column = random.choice(valid_locations)
+        for col in valid_locations:
+            row = get_next_open_row(board, col)
+            b_copy = board.copy()
+            drop_piece(b_copy, row, col, PLAYER_PIECE)
+            new_score = minimax(b_copy, depth-1, alpha, beta, True, difficulty)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
+        return column, value
 
 def get_valid_locations(board):
 	valid_locations = []
