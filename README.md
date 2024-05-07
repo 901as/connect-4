@@ -1,1 +1,1 @@
-conect 4
+conect for
